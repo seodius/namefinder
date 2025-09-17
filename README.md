@@ -53,3 +53,21 @@ This web application helps you brainstorm a catchy name for your new company. It
 4.  **Step 4: Choose Your Name**
     - The final list of AI-generated company names will be displayed.
     - Each name includes its `.com` domain availability and a list of potential competitors.
+
+---
+
+## CLI Tool
+
+This project also includes a command-line interface (CLI) tool that provides the same functionality as the web application, but runs entirely in your terminal.
+
+### Running the CLI Tool
+
+1.  **Ensure dependencies are installed:**
+    Make sure you have installed the dependencies from `requirements.txt` as described in the setup instructions above. This includes the `click` library, which is used for the CLI.
+
+2.  **Run the `start` command:**
+    In your terminal, from the project directory, run:
+    ```bash
+    python cli.py start
+    ```
+    This will launch the interactive tool. Follow the on-screen prompts to generate your company name.
