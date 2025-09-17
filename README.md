@@ -18,8 +18,8 @@ This web application helps you brainstorm a catchy name for your new company. It
     ```
 
 3.  **Configure your Gemini API Key:**
-    - Open the `config.py` file.
-    - Replace `"YOUR_GEMINI_API_KEY"` with your actual Gemini API key. It is highly recommended to use an environment variable for this in a production environment.
+    - In the project directory, copy the `.env.example` file to a new file named `.env`.
+    - Open the new `.env` file and replace `"YOUR_GEMINI_API_KEY_HERE"` with your actual Gemini API key.
 
 ## Running the Application
 
@@ -62,8 +62,8 @@ This project also includes a command-line interface (CLI) tool that provides the
 
 ### Running the CLI Tool
 
-1.  **Ensure dependencies are installed:**
-    Make sure you have installed the dependencies from `requirements.txt` as described in the setup instructions above. This includes the `click` library, which is used for the CLI.
+1.  **Ensure dependencies and API key are set up:**
+    Make sure you have installed the dependencies and configured your `.env` file as described in the setup instructions above.
 
 2.  **Run the `start` command:**
     In your terminal, from the project directory, run:

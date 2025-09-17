@@ -1,10 +1,11 @@
-# config.py
-
 import os
+from dotenv import load_dotenv
 
-# It is recommended to load the API key from an environment variable for security.
-# For example: GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY")
+# Load environment variables from a .env file
+load_dotenv()
+
+# Get the Gemini API key from the environment variable
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # System prompts for Gemini API
 UVP_SYSTEM_PROMPT = """
