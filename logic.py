@@ -1,18 +1,20 @@
 import json
 import whois
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import config
+import os
 
-# Configure the Gemini API
-if config.GEMINI_API_KEY == "YOUR_GEMINI_API_KEY" or not config.GEMINI_API_KEY:
-    print("Warning: GEMINI_API_KEY is not set in config.py. API calls will fail.")
-else:
-    genai.configure(api_key=config.GEMINI_API_KEY)
+def _get_client():
+    """Initializes and returns the GenAI client, checking for a valid API key."""
+    api_key = config.GEMINI_API_KEY
+    if not api_key or api_key == "YOUR_GEMINI_API_KEY":
+        raise ValueError("Gemini API key is not set or is still the placeholder value in config.py.")
+    return genai.Client(api_key=api_key)
 
 def generate_uvp(data):
-    """Generates a Unique Value Proposition using the Gemini API."""
-    if not genai.api_key:
-        raise ValueError("Gemini API key is not configured.")
+    """Generates a Unique Value Proposition using the new GenAI SDK."""
+    client = _get_client()
 
     user_prompt = f"""
     Here is the user's input:
@@ -24,14 +26,15 @@ def generate_uvp(data):
 
     full_prompt = f"{config.UVP_SYSTEM_PROMPT}\n\n{user_prompt}"
 
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(full_prompt)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=full_prompt
+    )
     return response.text.strip()
 
 def generate_lexicon(data):
-    """Generates a lexicon using the Gemini API."""
-    if not genai.api_key:
-        raise ValueError("Gemini API key is not configured.")
+    """Generates a lexicon using the new GenAI SDK."""
+    client = _get_client()
 
     user_prompt = f"""
     Here is the user's input:
@@ -43,22 +46,19 @@ def generate_lexicon(data):
 
     full_prompt = f"{config.LEXICON_SYSTEM_PROMPT}\n\n{user_prompt}"
 
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(full_prompt)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=full_prompt,
+        config={'response_mime_type': 'application/json'}
+    )
 
+    # The new SDK might handle JSON parsing better, but for now, we'll parse the text.
     cleaned_text = response.text.strip()
-    if cleaned_text.startswith("```json"):
-        cleaned_text = cleaned_text[7:]
-    if cleaned_text.endswith("```"):
-        cleaned_text = cleaned_text[:-3]
-
     return json.loads(cleaned_text)
 
 def generate_and_check_names(data):
     """Generates names, checks domain availability, and returns a curated list."""
-    if not genai.api_key:
-        raise ValueError("Gemini API key is not configured.")
-
+    client = _get_client()
     selected_lexicon_str = ", ".join([item['word'] for item in data.get('lexicon', [])])
 
     user_prompt = f"""
@@ -72,10 +72,13 @@ def generate_and_check_names(data):
 
     full_prompt = f"{config.NAMES_SYSTEM_PROMPT}\n\n{user_prompt}"
 
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(full_prompt)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=full_prompt,
+        config={'response_mime_type': 'application/json'}
+    )
 
-    cleaned_text = response.text.strip().replace("```json", "").replace("```", "").strip()
+    cleaned_text = response.text.strip()
     suggested_names = json.loads(cleaned_text)
 
     curated_list = []
